@@ -2,7 +2,7 @@
 LEAN_PATH = $(LEAN_DIR)/library:../n2o/src:./src
 export LEAN_PATH
 
-LEAN = src/web/nitro/tags
+LEAN = src/web/nitro/tags src/web/nitro/elements
 FLAGS = -g -Wall
 
 LIBNAME = libnitro.a

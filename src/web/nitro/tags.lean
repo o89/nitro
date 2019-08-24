@@ -1,44 +1,34 @@
 abbrev Name := String
 
-mutual inductive Attr, Elem
-with Attr : Type
+inductive Attr : Type
 | int : Name → Int → Attr
 | str : Name → String → Attr
 | list : Name → List String → Attr
-| body : List Elem → Attr
 | noVal : Name → Attr
-with Elem : Type
-| tag : Name → List Attr → Elem
+
+inductive Elem : Type
+| tag : Name → List Attr → List Elem → Elem
+| unpaired : Name → List Attr → Elem
 | liter : String → Elem
 
-def div := Elem.tag "div"
+def showAttrValue : Attr → Name × String
+| Attr.int name v ⇒ (name, toString v)
+| Attr.str name v ⇒ (name, v)
+| Attr.list name v ⇒ (name, String.intercalate " " v)
+| Attr.noVal name ⇒ (name, "")
 
-def idAttr := Attr.str "id"
-def classAttr := Attr.list "class"
+def rendNameString : Name × String → String
+| (name, "") ⇒ name
+| (name, v) ⇒ name ++ "=\"" ++ v ++ "\""
 
-def getBody : List Attr → List Elem
-| Attr.body x :: _ ⇒ x
-| hd :: tl ⇒ getBody tl
-| [] ⇒ []
-
-def showAttrValue : Attr → Option (Name × String)
-| Attr.int name v ⇒ some (name, toString v)
-| Attr.str name v ⇒ some (name, v)
-| Attr.list name v ⇒ some (name, String.intercalate " " v)
-| Attr.body _ ⇒ none
-| Attr.noVal name ⇒ some (name, "")
-
-def rendNameString : Name × String → Option String
-| (name, "") ⇒ some name
-| (name, v) ⇒ some (name ++ "=\"" ++ v ++ "\"")
-
-def rendAttr (x : Attr) := showAttrValue x >>= rendNameString
-def rendAttrs := String.intercalate " " ∘ List.filterMap rendAttr
+def rendAttr := rendNameString ∘ showAttrValue
+def rendAttrs := String.intercalate " " ∘ List.map rendAttr
 
 partial def render : Elem → String
-| Elem.tag tag attrs ⇒
-  let body := String.join (render <$> getBody attrs);
-  let attrs := rendAttrs attrs;
-  "<" ++ tag ++ " " ++ attrs ++ ">" ++ body ++ "</" ++ tag ++ ">"
+| Elem.tag tag attrs body ⇒
+  "<" ++ tag ++ " " ++ rendAttrs attrs ++ ">" ++
+  String.join (render <$> body) ++
+  "</" ++ tag ++ ">"
+| Elem.unpaired tag attrs ⇒
+  "<" ++ tag ++ " " ++ rendAttrs attrs ++ " />"
 | Elem.liter str ⇒ str
-
