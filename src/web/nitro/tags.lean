@@ -28,7 +28,7 @@ partial def render : Elem → String
 | Elem.tag tag attrs body ⇒
   "<" ++ tag ++ " " ++ rendAttrs attrs ++ ">" ++
   String.join (render <$> body) ++
-  "</" ++ tag ++ ">"
+  "<" ++ tag ++ ">"
 | Elem.unpaired tag attrs ⇒
   "<" ++ tag ++ " " ++ rendAttrs attrs ++ " />"
 | Elem.liter str ⇒ str
