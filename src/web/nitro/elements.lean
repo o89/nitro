@@ -1,7 +1,7 @@
 import web.nitro.tags
 
 def div := Elem.tag "div"
-def title := Elem.tag "title"
+def title := Elem.tag "title" []
 
 def idAttr := Attr.str "id"
 def classAttr := Attr.list "class"
