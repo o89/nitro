@@ -3,7 +3,8 @@ import network.n2o.web.http network.n2o.internal
 import web.nitro.elements web.nitro.javascript web.nitro.proto
 open network.n2o.web.http network.n2o.internal data.bert
 
-inductive Example | send
+inductive Example
+| send
 
 instance : BERT Example :=
 { toTerm := λ x ⇒ match x with
