@@ -1,3 +1,6 @@
+import data.bert
+open data.bert
+
 abbrev Name := String
 
 inductive Attr : Type
@@ -6,10 +9,14 @@ inductive Attr : Type
 | list : Name → List String → Attr
 | noVal : Name → Attr
 
-inductive Elem : Type
-| tag : Name → List Attr → List Elem → Elem
-| unpaired : Name → List Attr → Elem
-| liter : String → Elem
+structure Event (α : Type) :=
+(source : List String) (type : String) (postback : α)
+
+inductive Elem (α : Type) : Type
+| tag {} : Name → List Attr → List Elem → Elem
+| button {} : Name → List Attr → String → Event α → Elem
+| unpaired {} : Name → List Attr → Elem
+| liter {} : String → Elem
 
 def showAttrValue : Attr → Name × String
 | Attr.int name v ⇒ (name, toString v)
@@ -24,11 +31,34 @@ def rendNameString : Name × String → String
 def rendAttr := rendNameString ∘ showAttrValue
 def rendAttrs := String.intercalate " " ∘ List.map rendAttr
 
-partial def render : Elem → String
+def rendEvent {α : Type} [BERT α]
+  (target : String) (ev : Event α) : String :=
+let escape := λ s ⇒ "'" ++ s ++ "'";
+let renderSource :=
+λ s ⇒ "tuple(atom('" ++ s ++ "'),querySource('" ++ s ++ "'))";
+match writeTerm (BERT.toTerm ev.postback) with
+| Sum.ok v ⇒
+  "{ var x=qi('" ++ target ++ "'); x && x.addEventListener('" ++ ev.type ++
+  "',function(event){ if (validateSources([" ++ String.join (escape <$> ev.source) ++
+  "])) { ws.send(enc(tuple(atom('pickle'),bin('" ++ target ++
+  "'),bin(new Uint8Array(" ++ toString v ++ ")),[" ++
+  String.join (renderSource <$> ev.source) ++
+  "]))); } else console.log('Validation error'); })}"
+| Sum.fail _ ⇒ ""
+
+abbrev Html := String
+abbrev Javascript := String
+
+partial def render {α : Type} [BERT α] : Elem α → Html × Javascript
 | Elem.tag tag attrs body ⇒
-  "<" ++ tag ++ " " ++ rendAttrs attrs ++ ">" ++
-  String.join (render <$> body) ++
-  "</" ++ tag ++ ">"
+  let (html, js) := List.unzip (render <$> body);
+  ("<" ++ tag ++ " " ++ rendAttrs attrs ++ ">" ++
+   String.join html ++
+   "</" ++ tag ++ ">", String.join js)
+| Elem.button name attrs value ev ⇒
+  ("<button " ++ rendAttrs (Attr.str "id" name :: attrs) ++
+   ">" ++ value ++ "</button>",
+   rendEvent name ev)
 | Elem.unpaired tag attrs ⇒
-  "<" ++ tag ++ " " ++ rendAttrs attrs ++ " />"
-| Elem.liter str ⇒ str
+  ("<" ++ tag ++ " " ++ rendAttrs attrs ++ " />", "")
+| Elem.liter str ⇒ (str, "")

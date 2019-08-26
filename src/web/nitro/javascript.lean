@@ -14,35 +14,41 @@ match Put.run (Put.unicode x) with
   | Sum.fail s ⇒ Result.error s
 | Sum.fail s ⇒ Result.error s
 
-def update (target : String) (elem : Elem) : Result :=
-action $ "qi('" ++ target ++ "').outerHTML='" ++ render elem ++ "';"
+variables (α : Type) [BERT α]
+
+def update (target : String) (elem : Elem α) : Result :=
+let (html, js) := render elem;
+action $ "qi('" ++ target ++ "').outerHTML='" ++ html ++ "';" ++ js
 
 def updateText (target text : String) : Result :=
 action $ "qi('" ++ target ++ "').innerText='" ++ text ++ "';"
 
-def insertTagTop (tag target : String) (elem : Elem) : Result :=
+def insertTagTop (tag target : String) (elem : Elem α) : Result :=
+let (html, js) := render elem;
 action $
   "qi('" ++ target ++ "').insertBefore(" ++
   "(function(){ var div = qn('" ++ tag ++ "'); div.innerHTML = '" ++
-  render elem ++ "'; return div.firstChild; })()," ++
-  "qi('" ++ target ++ "').firstChild);"
+  html ++ "'; return div.firstChild; })()," ++
+  "qi('" ++ target ++ "').firstChild);" ++ js
 
-def insertTagBottom (tag target : String) (elem : Elem) : Result :=
+def insertTagBottom (tag target : String) (elem : Elem α) : Result :=
+let (html, js) := render elem;
 action $
   "(function(){ var div = qn('" ++ tag ++
-  "'); div.innerHTML = '" ++ render elem ++
-  "';qi('" ++ target ++ "').appendChild(div.firstChild); })();"
+  "'); div.innerHTML = '" ++ html ++
+  "';qi('" ++ target ++ "').appendChild(div.firstChild); })();" ++ js
 
-def insertTop := insertTagTop "div"
-def insertBottom := insertTagBottom "div"
+def insertTop := insertTagTop α "div"
+def insertBottom := insertTagBottom α "div"
 
-def insertAdjacent (position target : String) (elem : Elem) :=
+def insertAdjacent (position target : String) (elem : Elem α) :=
+let (html, js) := render elem;
 action $
   "qi('" ++ target ++ "').insertAdjacentHTML('" ++
-  position ++ "', '" ++ render elem ++ "');"
+  position ++ "', '" ++ html ++ "');" ++ js
 
-def insertBefore := insertAdjacent "beforebegin"
-def insertAfter := insertAdjacent "afterend"
+def insertBefore := insertAdjacent α "beforebegin"
+def insertAfter := insertAdjacent α "afterend"
 
 def clear (target : String) :=
 action $

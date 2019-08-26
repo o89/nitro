@@ -13,7 +13,7 @@ instance : BERT Example :=
   | _ ⇒ Sum.fail "invalid Example term" }
 
 def index : Nitro Example → Result
-| Nitro.init ⇒ insertBottom "hist" (div [] [ Elem.liter "hello" ])
+| Nitro.init ⇒ insertBottom Example "hist" (div [] [ Elem.liter "hello" ])
 | Nitro.message Example.send ⇒ Result.ok
 | _ ⇒ Result.ok
 
