@@ -33,16 +33,17 @@ def rendAttrs := String.intercalate " " ∘ List.map rendAttr
 
 def rendEvent {α : Type} [BERT α]
   (target : String) (ev : Event α) : String :=
+let join := String.intercalate ",";
 let escape := λ s ⇒ "'" ++ s ++ "'";
 let renderSource :=
 λ s ⇒ "tuple(atom('" ++ s ++ "'),string(querySourceRaw('" ++ s ++ "')))";
 match writeTerm (BERT.toTerm ev.postback) with
 | Sum.ok v ⇒
   "{ var x=qi('" ++ target ++ "'); x && x.addEventListener('" ++ ev.type ++
-  "',function(event){ if (validateSources([" ++ String.join (escape <$> ev.source) ++
+  "',function(event){ if (validateSources([" ++ join (escape <$> ev.source) ++
   "])) { ws.send(enc(tuple(atom('pickle'),bin('" ++ target ++
   "'),bin(new Uint8Array(" ++ toString v ++ ")),[" ++
-  String.join (renderSource <$> ev.source) ++
+  join (renderSource <$> ev.source) ++
   "]))); } else console.log('Validation error'); })}"
 | Sum.fail _ ⇒ ""
 
