@@ -35,7 +35,7 @@ def rendEvent {α : Type} [BERT α]
   (target : String) (ev : Event α) : String :=
 let escape := λ s ⇒ "'" ++ s ++ "'";
 let renderSource :=
-λ s ⇒ "tuple(atom('" ++ s ++ "'),querySource('" ++ s ++ "'))";
+λ s ⇒ "tuple(atom('" ++ s ++ "'),string(querySourceRaw('" ++ s ++ "')))";
 match writeTerm (BERT.toTerm ev.postback) with
 | Sum.ok v ⇒
   "{ var x=qi('" ++ target ++ "'); x && x.addEventListener('" ++ ev.type ++
