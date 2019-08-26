@@ -3,19 +3,18 @@ import network.n2o.web.http network.n2o.internal
 import web.nitro.elements web.nitro.javascript web.nitro.proto
 open network.n2o.web.http network.n2o.internal data.bert
 
-inductive Example
-| publish : String → Example
+inductive Example | send
 
 instance : BERT Example :=
 { toTerm := λ x ⇒ match x with
-  | Example.publish s ⇒ Term.tuple [ Term.atom "publish", Term.string s ],
+  | Example.send ⇒ Term.atom "send",
   fromTerm := λ x ⇒ match x with
-  | Term.tuple [ Term.atom "publish", Term.string s ] ⇒ Sum.ok (Example.publish s)
+  | Term.atom "send" ⇒ Sum.ok Example.send
   | _ ⇒ Sum.fail "invalid Example term" }
 
 def index : Nitro Example → Result
 | Nitro.init ⇒ insertBottom "hist" (div [] [ Elem.liter "hello" ])
-| Nitro.message (Example.publish s) ⇒ Result.ok
+| Nitro.message Example.send ⇒ Result.ok
 | _ ⇒ Result.ok
 
 def about : Nitro Example → Result
@@ -31,4 +30,3 @@ let handler := match Req.path cx.req with
 
 def handler : Handler := mkHandler (nitroProto Example) [ router ]
 def main := startServer handler ("localhost", 9000)
-
