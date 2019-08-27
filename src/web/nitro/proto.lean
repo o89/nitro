@@ -1,5 +1,4 @@
-import data.bert network.n2o.internal
-open data.bert network.n2o.internal
+import data.bert network.n2o
 
 inductive Nitro (α : Type)
 | init {} : Nitro

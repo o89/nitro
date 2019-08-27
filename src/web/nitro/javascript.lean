@@ -1,6 +1,4 @@
-import network.n2o.internal data.bert
-import web.nitro.elements
-open network.n2o.internal data.bert
+import network.n2o web.nitro.elements
 
 def action (x : String) : Result :=
 let term := λ b ⇒ Term.tuple

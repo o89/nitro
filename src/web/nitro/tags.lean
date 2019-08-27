@@ -1,5 +1,4 @@
 import data.bert
-open data.bert
 
 abbrev Name := String
 

@@ -1,16 +1,14 @@
 #LEAN_DIR = # May be set here
-LEAN_PATH = $(LEAN_DIR)/library:../n2o/src:./src:./sample-lean
+LEAN_PATH = $(LEAN_DIR)/library:../n2o/src:./src
 export LEAN_PATH
 
-LEAN = src/web/nitro/tags src/web/nitro/elements src/web/nitro/javascript src/web/nitro/proto
+LEAN = src/web/nitro/tags src/web/nitro/elements src/web/nitro/javascript src/web/nitro/proto src/web/nitro/default
 FLAGS = -g -Wall
 
 LIBNITRO = libnitro.a
 LIBN2O = ../n2o/libn2o.a
 
 LIBS = -lwebsockets
-
-SAMPLE = sample-lean/sample
 
 $(LIBNITRO): $(addsuffix .o,$(LEAN))
 	ar rvs $(LIBNITRO) $(addsuffix .o,$(LEAN))
