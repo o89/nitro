@@ -46,6 +46,18 @@ match writeTerm (BERT.toTerm ev.postback) with
   "]))); } else console.log('Validation error'); })}"
 | Sum.fail _ ⇒ ""
 
+def htmlEscapeTable : List (Char × String) :=
+[ ('&', "&amp;"), ('<', "&lt;"),
+  ('>', "&gt;"), (Char.ofNat 34, "&quot;"),
+  ('\'', "&#x27;"), ('/', "&#x2F;") ]
+
+-- definition through pattern-matching causes lags of typechecker
+def htmlEscapeChar (ch : Char) : String :=
+Option.getOrElse (htmlEscapeTable.lookup ch) (String.singleton ch)
+
+def htmlEscape : String → String :=
+String.foldl (λ s ⇒ String.append s ∘ htmlEscapeChar) ""
+
 abbrev Html := String
 abbrev Javascript := String
 
@@ -61,4 +73,4 @@ partial def render {α : Type} [BERT α] : Elem α → Html × Javascript
    rendEvent name ev)
 | Elem.unpaired tag attrs ⇒
   ("<" ++ tag ++ " " ++ rendAttrs attrs ++ " />", "")
-| Elem.liter str ⇒ (str, "")
+| Elem.liter str ⇒ (htmlEscape str, "")
