@@ -35,6 +35,9 @@ let readQuery : Term → Option (String × String) :=
     | Msg.text "N2O," ⇒ Nitro.init
     | _ ⇒ Nitro.error "unknown message" }
 
+def ignore {α : Type} [BERT α] : Nitro α → Result :=
+uselessRouter (nitroProto α)
+
 def pong := Result.reply (Msg.text "PONG")
 
 def Nitro.cx (α : Type) [BERT α] := Cx (nitroProto α)
