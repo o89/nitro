@@ -1,4 +1,4 @@
-import data.bert
+import Data.BERT
 
 abbrev Name := String
 
@@ -53,7 +53,7 @@ def htmlEscapeTable : List (Char × String) :=
 
 -- definition through pattern-matching causes lags of typechecker
 def htmlEscapeChar (ch : Char) : String :=
-Option.getOrElse (htmlEscapeTable.lookup ch) (String.singleton ch)
+Option.getD (htmlEscapeTable.lookup ch) (String.singleton ch)
 
 def htmlEscape : String → String :=
 String.foldl (λ s ⇒ String.append s ∘ htmlEscapeChar) ""

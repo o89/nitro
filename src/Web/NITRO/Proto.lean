@@ -1,4 +1,5 @@
-import data.bert network.n2o
+import Data.BERT
+import Network.N2O
 
 inductive Nitro (α : Type)
 | init {} : Nitro
