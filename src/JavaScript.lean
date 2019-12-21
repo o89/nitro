@@ -1,5 +1,5 @@
-import Network.N2O
-import Web.NITRO.Elements
+import N2O.Network.Default
+import NITRO.Elements
 
 def action (x : String) : Result :=
 let term := λ b ⇒ Term.tuple

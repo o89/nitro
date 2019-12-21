@@ -1,4 +1,4 @@
-import Web.NITRO.Tags
+import NITRO.Tags
 
 variable {α : Type}
 

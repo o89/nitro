@@ -1,4 +1,4 @@
-import Data.BERT
+import N2O.Data.BERT
 
 abbrev Name := String
 

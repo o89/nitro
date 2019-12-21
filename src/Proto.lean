@@ -1,5 +1,5 @@
-import Data.BERT
-import Network.N2O
+import N2O.Data.BERT
+import N2O.Network.Default
 
 inductive Nitro (α : Type)
 | init {} : Nitro
