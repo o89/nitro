@@ -2,16 +2,16 @@ import N2O.Network.Default
 import NITRO.Elements
 
 def action (x : String) : Result :=
-let term := λ b ⇒ Term.tuple
+let term := λ b => Term.tuple
   [ Term.atom "io",
     Term.binary b,
     Term.binary ByteArray.empty ];
 match Put.run (Put.unicode x) with
-| Sum.ok bytes ⇒
+| Sum.ok bytes =>
   match writeTerm (term bytes) with
-  | Sum.ok v ⇒ Result.reply (Msg.binary v)
-  | Sum.fail s ⇒ Result.error s
-| Sum.fail s ⇒ Result.error s
+  | Sum.ok v => Result.reply (Msg.binary v)
+  | Sum.fail s => Result.error s
+| Sum.fail s => Result.error s
 
 variables (α : Type) [BERT α]
 
