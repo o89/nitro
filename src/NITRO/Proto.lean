@@ -26,7 +26,7 @@ let readQuery : Term → Option (String × String) :=
             Term.binary termBin, Term.list linked ]) =>
         match Parser.run readTerm termBin with
         | Sum.ok term =>
-          match BERT.fromTerm _ term with
+          match BERT.fromTerm term with
           | Sum.ok v => Nitro.message v (List.filterMap readQuery linked)
           | Sum.fail s => Nitro.error s
         | Sum.fail s => Nitro.error s
