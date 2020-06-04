@@ -71,6 +71,6 @@ partial def render {α : Type} [BERT α] : Elem α → Html × Javascript
   ("<button " ++ rendAttrs (Attr.str "id" name :: attrs) ++
    ">" ++ value ++ "</button>",
    rendEvent name ev)
-| Elem.unpaired tag attrs =>
+| Elem.unpaired _ tag attrs =>
   ("<" ++ tag ++ " " ++ rendAttrs attrs ++ " />", "")
-| Elem.liter str => (htmlEscape str, "")
+| Elem.liter _ str => (htmlEscape str, "")
