@@ -2,11 +2,11 @@ import N2O.Data.BERT
 import N2O.Network.Default
 
 inductive Nitro (α : Type)
-| init {} : Nitro
+| init    : Nitro
 | message : α → List (String × String) → Nitro
-| error {} : String → Nitro
-| ping {} : Nitro
-| done {} : Nitro
+| error   : String → Nitro
+| ping    : Nitro
+| done    : Nitro
 
 def nitroProto (α : Type) [BERT α] : Proto :=
 let readQuery : Term → Option (String × String) :=
@@ -28,13 +28,13 @@ let readQuery : Term → Option (String × String) :=
         | Sum.ok term =>
           match BERT.fromTerm _ term with
           | Sum.ok v => Nitro.message v (List.filterMap readQuery linked)
-          | Sum.fail s => Nitro.error _ s
-        | Sum.fail s => Nitro.error _ s
-      | Sum.ok _ => Nitro.error _ "unknown term"
-      | Sum.fail s => Nitro.error _ s
-    | Msg.text "PING" => Nitro.ping _
-    | Msg.text "N2O," => Nitro.init _
-    | _ => Nitro.error _ "unknown message" }
+          | Sum.fail s => Nitro.error s
+        | Sum.fail s => Nitro.error s
+      | Sum.ok _ => Nitro.error "unknown term"
+      | Sum.fail s => Nitro.error s
+    | Msg.text "PING" => Nitro.ping
+    | Msg.text "N2O," => Nitro.init
+    | _ => Nitro.error "unknown message" }
 
 def ignore {α : Type} [BERT α] : Nitro α → Result :=
 uselessRouter (nitroProto α)

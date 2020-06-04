@@ -12,10 +12,10 @@ structure Event (α : Type) :=
 (source : List String) (type : String) (postback : α)
 
 inductive Elem (α : Type) : Type
-| tag {} : Name → List Attr → List Elem → Elem
-| button {} : Name → List Attr → String → Event α → Elem
-| unpaired {} : Name → List Attr → Elem
-| liter {} : String → Elem
+| tag      : Name → List Attr → List Elem → Elem
+| button   : Name → List Attr → String → Event α → Elem
+| unpaired : Name → List Attr → Elem
+| liter    : String → Elem
 
 def showAttrValue : Attr → Name × String
 | Attr.int name v => (name, toString v)
@@ -71,6 +71,6 @@ partial def render {α : Type} [BERT α] : Elem α → Html × Javascript
   ("<button " ++ rendAttrs (Attr.str "id" name :: attrs) ++
    ">" ++ value ++ "</button>",
    rendEvent name ev)
-| Elem.unpaired _ tag attrs =>
+| Elem.unpaired tag attrs =>
   ("<" ++ tag ++ " " ++ rendAttrs attrs ++ " />", "")
-| Elem.liter _ str => (htmlEscape str, "")
+| Elem.liter str => (htmlEscape str, "")
