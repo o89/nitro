@@ -39,10 +39,10 @@ let renderSource :=
 match writeTerm (BERT.toTerm ev.postback) with
 | Sum.ok v =>
   "{ var x=qi('" ++ target ++ "'); x && x.addEventListener('" ++ ev.type ++
-  "',function(event){ if (validateSources([" ++ join (escape <$> ev.source) ++
+  "',function(event){ if (validateSources([" ++ join (List.map escape ev.source) ++
   "])) { ws.send(enc(tuple(atom('pickle'),bin('" ++ target ++
   "'),bin(new Uint8Array(" ++ toString v ++ ")),[" ++
-  join (renderSource <$> ev.source) ++
+  join (List.map renderSource ev.source) ++
   "]))); } else console.log('Validation error'); })}"
 | Sum.fail _ => ""
 
@@ -63,7 +63,7 @@ abbrev Javascript := String
 
 partial def render {α : Type} [BERT α] : Elem α → Html × Javascript
 | Elem.tag tag attrs body =>
-  let (html, js) := List.unzip (render <$> body);
+  let (html, js) := List.unzip (List.map render body);
   ("<" ++ tag ++ " " ++ rendAttrs attrs ++ ">" ++
    String.join html ++
    "</" ++ tag ++ ">", String.join js)
