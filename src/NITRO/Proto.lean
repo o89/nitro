@@ -2,11 +2,11 @@ import N2O.Data.BERT
 import N2O.Network.Default
 
 inductive Nitro (α : Type)
-| init    : Nitro
-| message : α → List (String × String) → Nitro
-| error   : String → Nitro
-| ping    : Nitro
-| done    : Nitro
+| init    : Nitro α
+| message : α → List (String × String) → Nitro α
+| error   : String → Nitro α
+| ping    : Nitro α
+| done    : Nitro α
 
 def nitroProto (α : Type) [BERT α] : Proto :=
 let readQuery : Term → Option (String × String) :=

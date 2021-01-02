@@ -12,10 +12,10 @@ structure Event (α : Type) :=
 (source : List String) (type : String) (postback : α)
 
 inductive Elem (α : Type) : Type
-| tag      : Name → List Attr → List Elem → Elem
-| button   : Name → List Attr → String → Event α → Elem
-| unpaired : Name → List Attr → Elem
-| liter    : String → Elem
+| tag      : Name → List Attr → List (Elem α) → Elem α
+| button   : Name → List Attr → String → Event α → Elem α
+| unpaired : Name → List Attr → Elem α
+| liter    : String → Elem α
 
 def showAttrValue : Attr → Name × String
 | Attr.int name v => (name, toString v)
