@@ -13,10 +13,7 @@ let readQuery : Term → Option (String × String) :=
 λ t => match t with
 | Term.tuple [ Term.atom name, Term.string value ] => some (name, value)
 | _ => none;
-{ prot := Msg,
-  ev := Nitro α,
-  res := Result,
-  req := Req,
+{ ev := Nitro α,
   nothing := Result.ok,
   proto := λ p => match p with
     | Msg.binary input =>
