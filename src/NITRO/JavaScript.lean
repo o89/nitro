@@ -13,7 +13,7 @@ match Put.run (Put.unicode x) with
   | Sum.fail s => Result.error s
 | Sum.fail s => Result.error s
 
-variables (α : Type) [BERT α]
+variable (α : Type) [BERT α]
 
 def update (target : String) (elem : Elem α) : Result :=
 let (html, js) := render elem;
